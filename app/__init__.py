@@ -1,7 +1,6 @@
 from flask import Flask
 from .config import Config
-from .extensions import db, mail, migrate
-
+from .extensions import db, mail, migrate, cors
 
 def create_app():
     app = Flask(__name__)
