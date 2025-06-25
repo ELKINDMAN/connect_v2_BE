@@ -10,6 +10,7 @@ def create_app():
     db.init_app(app)
     mail.init_app(app)
     migrate.init_app(app, db)
+    cors.init_app(app, origin["*"], supports_credentials=True)
 
     from app.api.auth_routes import auth_bp
     from app.api.admin_routes import admin_bp
