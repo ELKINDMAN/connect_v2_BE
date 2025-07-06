@@ -1,10 +1,12 @@
 from flask import Blueprint, request, jsonify
 from app.extensions import db
 from app.models.admin import Admin
+from flask_jwt_extended import create_access_token, jwt_required
 
 admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/', methods=['GET'])
+@jwt_required()
 def get_all_admins():
     admins = Admin.query.all()
     return jsonify([{
@@ -34,8 +36,21 @@ def create_admin():
     db.session.add(admin)
     db.session.commit()
 
-    return jsonify({'message': 'Admin created successfully', 'admin_id': admin.id}), 201
+    access_token = create_access_token(identity=admin.id)
+    return jsonify({
+        'message': 'Admin created successfully',
+        'admin_id': admin.id,
+        'token': access_token,
+        'user': {
+            'id': admin.id,
+            'username': admin.username,
+            'fullname': admin.name,
+            'email': admin.email,
+            'role': 'admin'
+        }
+    }), 201
 @admin_bp.route('/<int:admin_id>', methods=['GET'])
+@jwt_required()
 def get_admin(admin_id):
     admin = Admin.query.get(admin_id)
     if not admin:
