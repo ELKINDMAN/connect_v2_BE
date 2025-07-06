@@ -1,6 +1,6 @@
 from flask import Flask
 from .config import Config
-from .extensions import db, mail, migrate, cors
+from .extensions import db, mail, migrate, cors, jwt
 
 def create_app():
     app = Flask(__name__)
@@ -9,6 +9,7 @@ def create_app():
     db.init_app(app)
     mail.init_app(app)
     migrate.init_app(app, db)
+    jwt.init_app(app)
     cors.init_app(app, origin["*"], supports_credentials=True)
 
     from app.api.auth_routes import auth_bp
