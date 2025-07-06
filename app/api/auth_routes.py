@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from app.services.auth_utils import authenticate_admin
-from flask import Blueprint, request, jsonify
 from app.models.admin import Admin
 from app.extensions import db
 from app.services.mail_service import generate_reset_token, send_reset_email
+from flask_jwt_extended import create_access_token
 from datetime import datetime
 
 auth_bp = Blueprint('auth', __name__)
@@ -43,8 +43,6 @@ def reset_password(token):
 
     return jsonify({'message': 'Password reset successful'}), 200
 
-auth_bp = Blueprint('auth', __name__)
-
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -56,12 +54,18 @@ def login():
 
     admin = authenticate_admin(username_or_email, password)
     if admin:
+        access_token = create_access_token(identity=admin.id)
         return jsonify({
-            'id': admin.id,
-            'username': admin.username,
-            'email': admin.email,
-            'last_login': admin.last_login,
-            'login_count': admin.login_count
+            'token': access_token,
+            'user': {
+                'id': admin.id,
+                'username': admin.username,
+                'fullName': admin.name,
+                'email': admin.email,
+                'role': 'admin',
+                'last_login': admin.last_login,
+                'login_count': admin.login_count
+            }
         }), 200
     else:
         return jsonify({'error': 'Invalid username/email or password'}), 401
