@@ -1,7 +1,9 @@
 import os
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///instance/app_database.db'
+    SQLALCHEMY_DATABASE_URI =\
+            'sqlite:///' + os.path.join(basedir, 'app_database.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'alvb05iukzru3iu3vnu3t9376v9i3bu')
 
