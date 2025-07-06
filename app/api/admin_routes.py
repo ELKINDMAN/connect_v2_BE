@@ -36,6 +36,7 @@ def create_admin():
     db.session.add(admin)
     db.session.commit()
 
+    # Create JWT token for the new admin
     access_token = create_access_token(identity=admin.id)
     return jsonify({
         'message': 'Admin created successfully',
@@ -44,11 +45,12 @@ def create_admin():
         'user': {
             'id': admin.id,
             'username': admin.username,
-            'fullname': admin.name,
+            'fullName': admin.name,
             'email': admin.email,
             'role': 'admin'
         }
     }), 201
+
 @admin_bp.route('/<int:admin_id>', methods=['GET'])
 @jwt_required()
 def get_admin(admin_id):
