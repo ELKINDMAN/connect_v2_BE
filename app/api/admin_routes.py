@@ -35,9 +35,10 @@ def create_admin():
     admin.set_password(password)
     db.session.add(admin)
     db.session.commit()
-
+    print("Admin created successfully!, admin)
     # Create JWT token for the new admin
     access_token = create_access_token(identity=admin.id)
+    print(f"returning success and user credentials of {admin}")
     return jsonify({
         'message': 'Admin created successfully',
         'admin_id': admin.id,
